@@ -40,14 +40,14 @@ public class AttributeValuesCustomDao {
 
     public Optional<List<AttributeValues>> findAll(){
         List<AttributeValues> attributesValuesList = null;
-        Query query = entityManager.createNativeQuery("select * from attribute_values where attribute =1 ",AttributeValues.class);
+        Query query = entityManager.createNativeQuery("select * from attribute_values where available =1 ",AttributeValues.class);
         attributesValuesList = query.getResultList();
         return attributesValuesList!=null && !attributesValuesList.isEmpty() ? Optional.ofNullable(attributesValuesList) : Optional.ofNullable(null);
     }
 
     public Optional<List<AttributeValues>> findByIds(List<Integer> ids){
         List<AttributeValues> attributesValuesList = null;
-        Query query = entityManager.createNativeQuery("select * from attribute_values where attribute =1 AND id IN (?)",AttributeValues.class);
+        Query query = entityManager.createNativeQuery("select * from attribute_values where available =1 AND id IN (?)",AttributeValues.class);
         query.setParameter(1,ids);
         attributesValuesList = query.getResultList();
         return attributesValuesList!=null && !attributesValuesList.isEmpty() ? Optional.ofNullable(attributesValuesList) : Optional.ofNullable(null);

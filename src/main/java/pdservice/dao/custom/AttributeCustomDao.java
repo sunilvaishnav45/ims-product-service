@@ -47,14 +47,14 @@ public class AttributeCustomDao {
 
     public Optional<List<Attributes>> findAll(){
         List<Attributes> attributesList = null;
-        Query query = entityManager.createNativeQuery("select * from attributes where attribute =1 ",Attributes.class);
+        Query query = entityManager.createNativeQuery("select * from attributes where available =1 ",Attributes.class);
         attributesList = query.getResultList();
         return attributesList!=null && !attributesList.isEmpty() ? Optional.ofNullable(attributesList) : Optional.ofNullable(null);
     }
 
     public Optional<List<Attributes>> findByIds(List<Integer> ids){
         List<Attributes> attributesList = null;
-        Query query = entityManager.createNativeQuery("select * from attributes where attribute =1 AND id IN (?)",Attributes.class);
+        Query query = entityManager.createNativeQuery("select * from attributes where available =1 AND id IN (?)",Attributes.class);
         query.setParameter(1,ids);
         attributesList = query.getResultList();
         return attributesList!=null && !attributesList.isEmpty() ? Optional.ofNullable(attributesList) : Optional.ofNullable(null);

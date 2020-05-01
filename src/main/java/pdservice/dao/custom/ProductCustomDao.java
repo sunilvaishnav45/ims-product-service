@@ -42,14 +42,14 @@ public class ProductCustomDao {
 
     public Optional<List<Product>> findAll(){
         List<Product> productList = null;
-        Query query = entityManager.createNativeQuery("select * from product where attribute =1 ",Product.class);
+        Query query = entityManager.createNativeQuery("select * from product where available =1 ",Product.class);
         productList = query.getResultList();
         return productList!=null && !productList.isEmpty() ? Optional.ofNullable(productList) : Optional.ofNullable(null);
     }
 
     public Optional<List<Product>> findByIds(List<Integer> ids){
         List<Product> productList = null;
-        Query query = entityManager.createNativeQuery("select * from product where attribute =1 AND id IN (?)",Product.class);
+        Query query = entityManager.createNativeQuery("select * from product where available =1 AND id IN (?)",Product.class);
         query.setParameter(1,ids);
         productList = query.getResultList();
         return productList!=null && !productList.isEmpty() ? Optional.ofNullable(productList) : Optional.ofNullable(null);

@@ -46,14 +46,14 @@ public class CategoryCustomDao {
 
     public Optional<List<Category>> findAll(){
         List<Category> categoryList = null;
-        Query query = entityManager.createNativeQuery("select * from category where attribute =1 ",Category.class);
+        Query query = entityManager.createNativeQuery("select * from category where available =1 ",Category.class);
         categoryList = query.getResultList();
         return categoryList!=null && !categoryList.isEmpty() ? Optional.ofNullable(categoryList) : Optional.ofNullable(null);
     }
 
     public Optional<List<Category>> findByIds(List<Integer> ids){
         List<Category> categoryList = null;
-        Query query = entityManager.createNativeQuery("select * from category where attribute =1 AND id IN (?)",Category.class);
+        Query query = entityManager.createNativeQuery("select * from category where available =1 AND id IN (?)",Category.class);
         query.setParameter(1,ids);
         categoryList = query.getResultList();
         return categoryList!=null && !categoryList.isEmpty() ? Optional.ofNullable(categoryList) : Optional.ofNullable(null);

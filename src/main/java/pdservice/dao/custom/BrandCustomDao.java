@@ -42,14 +42,14 @@ public class BrandCustomDao {
 
     public Optional<List<Brand>> findAll(){
         List<Brand> brandList = null;
-        Query query = entityManager.createNativeQuery("select * from brand where attribute =1 ",Brand.class);
+        Query query = entityManager.createNativeQuery("select * from brand where available =1 ",Brand.class);
         brandList = query.getResultList();
         return brandList!=null && !brandList.isEmpty() ? Optional.ofNullable(brandList) : Optional.ofNullable(null);
     }
 
     public Optional<List<Brand>> findByIds(List<Integer> ids){
         List<Brand> brandList = null;
-        Query query = entityManager.createNativeQuery("select * from brand where attribute =1 AND id IN (?)",Brand.class);
+        Query query = entityManager.createNativeQuery("select * from brand where available =1 AND id IN (?)",Brand.class);
         query.setParameter(1,ids);
         brandList = query.getResultList();
         return brandList!=null && !brandList.isEmpty() ? Optional.ofNullable(brandList) : Optional.ofNullable(null);
