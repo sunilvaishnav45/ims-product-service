@@ -14,6 +14,7 @@ import pdservice.service.UserService;
 import pdservice.utils.StringUtils;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -44,14 +45,16 @@ public class CategoryController {
     @GetMapping(value = {"/"})
     public ResponseEntity<List<Category>> getCategory(HttpServletRequest request, HttpServletRequest response, @RequestParam(required = false) String categoryIds){
         User loggedInUser = userService.getLoggedInUser();
-        List<Category> categoryList = null;
+        List<Category> categoryList = new ArrayList<>();
         if(!userService.userHasReadPermission(loggedInUser))
             return new ResponseEntity("User doesn't has read permission",HttpStatus.FORBIDDEN);
         if(categoryIds!=null){
             if(!StringUtils.convertCommaSepratedIntoList(categoryIds).isPresent())
                 return new ResponseEntity("Category ids are not valid",HttpStatus.BAD_REQUEST);
-            categoryList = (List<Category>) categoryService.findByIds(StringUtils.convertCommaSepratedIntoList(categoryIds).get()).get();
-        }
+            Optional<List<Category>> categories = categoryService.findByIds(StringUtils.convertCommaSepratedIntoList(categoryIds).get());
+            if(categories.isPresent())
+                categoryList = (List<Category>) categories.get();
+           }
         else{
             Optional<List<Category>> categories = categoryService.findAll();
             if(categories.isPresent())

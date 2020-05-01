@@ -5,6 +5,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import pdservice.dao.BrandDao;
+import pdservice.entity.Attributes;
 import pdservice.entity.Brand;
 import pdservice.entity.User;
 import pdservice.service.BrandService;
@@ -13,6 +14,7 @@ import pdservice.service.UserService;
 import pdservice.utils.StringUtils;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -43,16 +45,16 @@ public class BrandController {
     @GetMapping(value = {"/"})
     public ResponseEntity<List<Brand>> getBrand(HttpServletRequest request, HttpServletRequest response, @RequestParam(required = false) String brandIds){
         User loggedInUser = userService.getLoggedInUser();
-        List<Brand> brandList = null;
+        List<Brand> brandList = new ArrayList<>();
         if(!userService.userHasReadPermission(loggedInUser))
             return new ResponseEntity("User doesn't has read permission",HttpStatus.FORBIDDEN);
         if(brandIds!=null){
             if(!StringUtils.convertCommaSepratedIntoList(brandIds).isPresent())
                 return new ResponseEntity("Brand ids are not valid",HttpStatus.BAD_REQUEST);
-            brandList = (List<Brand>) brandService.findByIds(StringUtils.convertCommaSepratedIntoList(brandIds).get()).get();
-        }
-        else
-        {
+            Optional<List<Brand>> brands = brandService.findByIds(StringUtils.convertCommaSepratedIntoList(brandIds).get());
+            if(brands.isPresent())
+                brandList = (List<Brand>) brands.get();
+        }else{
            Optional<List<Brand>> brands = brandService.findAll();
             if(brands.isPresent())
                 brandList = (List<Brand>) brands.get();

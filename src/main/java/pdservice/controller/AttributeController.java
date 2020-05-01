@@ -13,6 +13,7 @@ import pdservice.service.UserService;
 import pdservice.utils.StringUtils;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -46,13 +47,15 @@ public class AttributeController {
     @GetMapping(value = {"/"})
     public ResponseEntity<List<Attributes>> getAttribute(HttpServletRequest request, HttpServletRequest response, @RequestParam(required = false) String attributeIds){
         User loggedInUser = userService.getLoggedInUser();
-        List<Attributes> attributesList = null;
+        List<Attributes> attributesList = new ArrayList<>();
         if(!userService.userHasReadPermission(loggedInUser))
             return new ResponseEntity("User doesn't has read permission",HttpStatus.FORBIDDEN);
         if(attributeIds!=null){
             if(!StringUtils.convertCommaSepratedIntoList(attributeIds).isPresent())
                 return new ResponseEntity("Attribute ids are not valid",HttpStatus.BAD_REQUEST);
-            attributesList = (List<Attributes>) attributeService.findAttributesByIds(StringUtils.convertCommaSepratedIntoList(attributeIds).get()).get();
+            Optional<List<Attributes>> attributes = attributeService.findAttributesByIds(StringUtils.convertCommaSepratedIntoList(attributeIds).get());
+            if(attributes.isPresent())
+                attributesList = (List<Attributes>) attributes.get();
         }else{
             Optional<List<Attributes>> attributes = attributeService.findAllAttributes();
             if(attributes.isPresent())

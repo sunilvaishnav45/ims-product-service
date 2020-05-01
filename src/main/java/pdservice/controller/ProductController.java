@@ -17,6 +17,7 @@ import pdservice.service.UserService;
 import pdservice.utils.StringUtils;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -61,13 +62,15 @@ public class ProductController {
     @GetMapping(value = {"/"})
     public ResponseEntity<List<Product>> getProduct(HttpServletRequest request, HttpServletRequest response, @RequestParam(required = false) String productIds){
         User loggedInUser = userService.getLoggedInUser();
-        List<Product> productList = null;
+        List<Product> productList = new ArrayList<>();
         if(!userService.userHasReadPermission(loggedInUser))
             return new ResponseEntity("User doesn't has read permission",HttpStatus.FORBIDDEN);
         if(productIds!=null){
             if(!StringUtils.convertCommaSepratedIntoList(productIds).isPresent())
                 return new ResponseEntity("Product ids are not valid",HttpStatus.BAD_REQUEST);
-            productList = (List<Product>) productService.findByIds(StringUtils.convertCommaSepratedIntoList(productIds).get()).get();
+            Optional<List<Product>> products = productService.findByIds(StringUtils.convertCommaSepratedIntoList(productIds).get());
+            if(products.isPresent())
+                productList = (List<Product>) products.get();
         }else{
             Optional<List<Product>> products = productService.findAll();
             if(products.isPresent())
