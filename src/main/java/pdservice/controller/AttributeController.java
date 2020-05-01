@@ -14,6 +14,7 @@ import pdservice.utils.StringUtils;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/attribute")
@@ -52,9 +53,11 @@ public class AttributeController {
             if(!StringUtils.convertCommaSepratedIntoList(attributeIds).isPresent())
                 return new ResponseEntity("Attribute ids are not valid",HttpStatus.BAD_REQUEST);
             attributesList = (List<Attributes>) attributeService.findAttributesByIds(StringUtils.convertCommaSepratedIntoList(attributeIds).get()).get();
+        }else{
+            Optional<List<Attributes>> attributes = attributeService.findAllAttributes();
+            if(attributes.isPresent())
+                attributesList = (List<Attributes>) attributes.get();
         }
-        else
-            attributesList = (List<Attributes>) attributeService.findAllAttributes().get();
         return new ResponseEntity(attributesList,HttpStatus.ACCEPTED);
     }
 

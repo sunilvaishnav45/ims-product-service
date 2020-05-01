@@ -15,6 +15,7 @@ import pdservice.utils.StringUtils;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("category")
@@ -51,8 +52,12 @@ public class CategoryController {
                 return new ResponseEntity("Category ids are not valid",HttpStatus.BAD_REQUEST);
             categoryList = (List<Category>) categoryService.findByIds(StringUtils.convertCommaSepratedIntoList(categoryIds).get()).get();
         }
-        else
-            categoryList = (List<Category>) categoryService.findAll().get();
+        else{
+            Optional<List<Category>> categories = categoryService.findAll();
+            if(categories.isPresent())
+                categoryList = (List<Category>) categories.get();
+        }
+
         return new ResponseEntity(categoryList,HttpStatus.ACCEPTED);
     }
 

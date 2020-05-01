@@ -7,6 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import pdservice.dao.ProductDao;
 import pdservice.entity.Brand;
+import pdservice.entity.Category;
 import pdservice.entity.Product;
 import pdservice.entity.User;
 import pdservice.service.BrandService;
@@ -17,6 +18,7 @@ import pdservice.utils.StringUtils;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/product")
@@ -66,9 +68,11 @@ public class ProductController {
             if(!StringUtils.convertCommaSepratedIntoList(productIds).isPresent())
                 return new ResponseEntity("Product ids are not valid",HttpStatus.BAD_REQUEST);
             productList = (List<Product>) productService.findByIds(StringUtils.convertCommaSepratedIntoList(productIds).get()).get();
+        }else{
+            Optional<List<Product>> products = productService.findAll();
+            if(products.isPresent())
+                productList = (List<Product>) products.get();
         }
-        else
-            productList = (List<Product>) productService.findAll().get();
         return new ResponseEntity(productList,HttpStatus.ACCEPTED);
     }
 

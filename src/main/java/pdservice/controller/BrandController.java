@@ -14,6 +14,7 @@ import pdservice.utils.StringUtils;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/brand")
@@ -51,7 +52,11 @@ public class BrandController {
             brandList = (List<Brand>) brandService.findByIds(StringUtils.convertCommaSepratedIntoList(brandIds).get()).get();
         }
         else
-            brandList = (List<Brand>) brandService.findAll().get();
+        {
+           Optional<List<Brand>> brands = brandService.findAll();
+            if(brands.isPresent())
+                brandList = (List<Brand>) brands.get();
+        }
         return new ResponseEntity(brandList,HttpStatus.ACCEPTED);
     }
 
