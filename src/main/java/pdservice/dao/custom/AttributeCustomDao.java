@@ -37,5 +37,27 @@ public class AttributeCustomDao {
         return attributesList!=null && !attributesList.isEmpty() ? Optional.ofNullable(attributesList.get(0)) : Optional.ofNullable(null);
     }
 
+    public Optional<Attributes> unAvailableAttributes(Attributes attributes){
+        List<Attributes> attributesList = null;
+        Query query = entityManager.createNativeQuery("update attributes set available=0 where id =? ",Attributes.class);
+        query.setParameter(1,attributes.getId());
+        attributesList = query.getResultList();
+        return attributesList!=null && !attributesList.isEmpty() ? Optional.ofNullable(attributesList.get(0)) : Optional.ofNullable(null);
+    }
+
+    public Optional<List<Attributes>> findAll(){
+        List<Attributes> attributesList = null;
+        Query query = entityManager.createNativeQuery("select * from attributes where attribute =1 ",Attributes.class);
+        attributesList = query.getResultList();
+        return attributesList!=null && !attributesList.isEmpty() ? Optional.ofNullable(attributesList) : Optional.ofNullable(null);
+    }
+
+    public Optional<List<Attributes>> findByIds(List<Integer> ids){
+        List<Attributes> attributesList = null;
+        Query query = entityManager.createNativeQuery("select * from attributes where attribute =1 AND id IN (?)",Attributes.class);
+        query.setParameter(1,ids);
+        attributesList = query.getResultList();
+        return attributesList!=null && !attributesList.isEmpty() ? Optional.ofNullable(attributesList) : Optional.ofNullable(null);
+    }
 
 }

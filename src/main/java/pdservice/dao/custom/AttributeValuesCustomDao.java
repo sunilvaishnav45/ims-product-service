@@ -4,6 +4,7 @@ import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import pdservice.entity.AttributeValues;
+import pdservice.entity.Attributes;
 
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
@@ -27,6 +28,29 @@ public class AttributeValuesCustomDao {
         query.setParameter(2,attributeValues.getAttributeValue());
         attributesValuesList = query.getResultList();
         return attributesValuesList!=null && !attributesValuesList.isEmpty() ? Optional.ofNullable(attributesValuesList.get(0)) : Optional.ofNullable(null);
+    }
+
+    public Optional<AttributeValues> unAvailableAttributeValue(AttributeValues attributeValues){
+        List<AttributeValues> attributesValuesList = null;
+        Query query = entityManager.createNativeQuery("update attribute_values set available=0 where id =?", AttributeValues.class);
+        query.setParameter(2,attributeValues.getId());
+        attributesValuesList = query.getResultList();
+        return attributesValuesList!=null && !attributesValuesList.isEmpty() ? Optional.ofNullable(attributesValuesList.get(0)) : Optional.ofNullable(null);
+    }
+
+    public Optional<List<AttributeValues>> findAll(){
+        List<AttributeValues> attributesValuesList = null;
+        Query query = entityManager.createNativeQuery("select * from attribute_values where attribute =1 ",AttributeValues.class);
+        attributesValuesList = query.getResultList();
+        return attributesValuesList!=null && !attributesValuesList.isEmpty() ? Optional.ofNullable(attributesValuesList) : Optional.ofNullable(null);
+    }
+
+    public Optional<List<AttributeValues>> findByIds(List<Integer> ids){
+        List<AttributeValues> attributesValuesList = null;
+        Query query = entityManager.createNativeQuery("select * from attribute_values where attribute =1 AND id IN (?)",AttributeValues.class);
+        query.setParameter(1,ids);
+        attributesValuesList = query.getResultList();
+        return attributesValuesList!=null && !attributesValuesList.isEmpty() ? Optional.ofNullable(attributesValuesList) : Optional.ofNullable(null);
     }
 
 }

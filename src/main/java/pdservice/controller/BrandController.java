@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.*;
 import pdservice.dao.BrandDao;
 import pdservice.entity.Brand;
 import pdservice.entity.User;
+import pdservice.service.BrandService;
 import pdservice.service.ProductService;
 import pdservice.service.UserService;
 import pdservice.utils.StringUtils;
@@ -25,14 +26,14 @@ public class BrandController {
     private BrandDao brandDao;
 
     @Autowired
-    private ProductService productService;
+    private BrandService brandService;
 
     @PostMapping(value = {"/"}, consumes = "application/json")
     public ResponseEntity<Brand> saveBrand(HttpServletRequest request, HttpServletRequest response, @RequestBody Brand brand){
         User loggedInUser = userService.getLoggedInUser();
         if(!userService.userHasWritePermission(loggedInUser))
             return new ResponseEntity("User doesn't has write permission", HttpStatus.FORBIDDEN);
-        if (productService.brandExists(brand.getBrand()))
+        if (brandService.brandExists(brand.getBrand()))
             return new ResponseEntity("Brand already exist", HttpStatus.BAD_REQUEST);
         brandDao.save(brand);
         return new ResponseEntity(brand, HttpStatus.ACCEPTED);
@@ -47,10 +48,21 @@ public class BrandController {
         if(brandIds!=null){
             if(!StringUtils.convertCommaSepratedIntoList(brandIds).isPresent())
                 return new ResponseEntity("Brand ids are not valid",HttpStatus.BAD_REQUEST);
-            brandList = (List<Brand>) brandDao.findAllById(StringUtils.convertCommaSepratedIntoList(brandIds).get());
+            brandList = (List<Brand>) brandService.findByIds(StringUtils.convertCommaSepratedIntoList(brandIds).get()).get();
         }
         else
-            brandList = (List<Brand>) brandDao.findAll();
+            brandList = (List<Brand>) brandService.findAll().get();
         return new ResponseEntity(brandList,HttpStatus.ACCEPTED);
+    }
+
+    @DeleteMapping(value="/", consumes = "application/json")
+    public ResponseEntity<Brand> deleteBrand(@RequestBody Brand brand){
+        User loggedInUser = userService.getLoggedInUser();
+        if(!userService.userHasWritePermission(loggedInUser))
+            return new ResponseEntity("User doesn't has write permission",HttpStatus.FORBIDDEN);
+        if(!brandDao.existsById(brand.getId()))
+            return new ResponseEntity("Brand id are not valid",HttpStatus.BAD_REQUEST);
+        brandService.unAvailableBrand(brand);
+        return new ResponseEntity(brand,HttpStatus.ACCEPTED);
     }
 }

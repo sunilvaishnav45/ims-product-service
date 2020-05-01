@@ -6,8 +6,11 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import pdservice.dao.ProductDao;
+import pdservice.entity.Brand;
 import pdservice.entity.Product;
 import pdservice.entity.User;
+import pdservice.service.BrandService;
+import pdservice.service.CategoryService;
 import pdservice.service.ProductService;
 import pdservice.service.UserService;
 import pdservice.utils.StringUtils;
@@ -28,6 +31,12 @@ public class ProductController {
     @Autowired
     private ProductService productService;
 
+    @Autowired
+    private CategoryService categoryService;
+
+    @Autowired
+    private BrandService brandService;
+
     private static final Logger LOGGER = Logger.getLogger(ProductController.class);
 
     @PostMapping(value = {"/"}, consumes = "application/json")
@@ -36,9 +45,9 @@ public class ProductController {
         if(!userService.userHasWritePermission(loggedInUser))
             return new ResponseEntity("User doesn't has write permission",HttpStatus.FORBIDDEN);
         if(!productService.productExists(product)){
-            if(!productService.categoryExists(product.getCategory()))
+            if(!categoryService.categoryExists(product.getCategory()))
                 return new ResponseEntity("Category doesn't exist",HttpStatus.BAD_REQUEST);
-            if(!productService.brandExists(product.getBrand()))
+            if(!brandService.brandExists(product.getBrand()))
                 return new ResponseEntity("Brand doesn't exist",HttpStatus.BAD_REQUEST);
             productDao.save(product);
             return new ResponseEntity(product,HttpStatus.ACCEPTED);
@@ -56,11 +65,22 @@ public class ProductController {
         if(productIds!=null){
             if(!StringUtils.convertCommaSepratedIntoList(productIds).isPresent())
                 return new ResponseEntity("Product ids are not valid",HttpStatus.BAD_REQUEST);
-            productList = (List<Product>) productDao.findAllById(StringUtils.convertCommaSepratedIntoList(productIds).get());
+            productList = (List<Product>) productService.findByIds(StringUtils.convertCommaSepratedIntoList(productIds).get()).get();
         }
         else
-            productList = (List<Product>) productDao.findAll();
+            productList = (List<Product>) productService.findAll().get();
         return new ResponseEntity(productList,HttpStatus.ACCEPTED);
+    }
+
+    @DeleteMapping(value="/", consumes = "application/json")
+    public ResponseEntity<Product> deleteProduct(@RequestBody Product product){
+        User loggedInUser = userService.getLoggedInUser();
+        if(!userService.userHasWritePermission(loggedInUser))
+            return new ResponseEntity("User doesn't has write permission",HttpStatus.FORBIDDEN);
+        if(!productDao.existsById(product.getId()))
+            return new ResponseEntity("Product id are not valid",HttpStatus.BAD_REQUEST);
+        productService.unAvailableProduct(product);
+        return new ResponseEntity(product,HttpStatus.ACCEPTED);
     }
 
 }

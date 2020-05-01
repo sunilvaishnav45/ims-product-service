@@ -3,6 +3,7 @@ package pdservice.dao.custom;
 import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
+import pdservice.entity.Category;
 import pdservice.entity.Product;
 
 import javax.persistence.EntityManager;
@@ -30,4 +31,27 @@ public class ProductCustomDao {
         return productList!=null && !productList.isEmpty() ? Optional.ofNullable(productList.get(0)) : Optional.ofNullable(null);
     }
 
+    public Optional<Product> unAvailableProduct(Product product){
+        List<Product> productList = null;
+        Query query = entityManager.createNativeQuery("update product set available=0 where = ?", Product.class);
+        query.setParameter(1,product.getId());
+        productList = query.getResultList();
+        return productList!=null && !productList.isEmpty() ? Optional.ofNullable(productList.get(0)) : Optional.ofNullable(null);
+    }
+
+
+    public Optional<List<Product>> findAll(){
+        List<Product> productList = null;
+        Query query = entityManager.createNativeQuery("select * from product where attribute =1 ",Product.class);
+        productList = query.getResultList();
+        return productList!=null && !productList.isEmpty() ? Optional.ofNullable(productList) : Optional.ofNullable(null);
+    }
+
+    public Optional<List<Product>> findByIds(List<Integer> ids){
+        List<Product> productList = null;
+        Query query = entityManager.createNativeQuery("select * from product where attribute =1 AND id IN (?)",Product.class);
+        query.setParameter(1,ids);
+        productList = query.getResultList();
+        return productList!=null && !productList.isEmpty() ? Optional.ofNullable(productList) : Optional.ofNullable(null);
+    }
 }

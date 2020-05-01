@@ -5,8 +5,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import pdservice.dao.CategoryDao;
+import pdservice.entity.Brand;
 import pdservice.entity.Category;
 import pdservice.entity.User;
+import pdservice.service.CategoryService;
 import pdservice.service.ProductService;
 import pdservice.service.UserService;
 import pdservice.utils.StringUtils;
@@ -25,14 +27,14 @@ public class CategoryController {
     private CategoryDao categoryDao;
 
     @Autowired
-    private ProductService productService;
+    private CategoryService categoryService;
 
     @PostMapping(value = {"/"}, consumes = "application/json")
     public ResponseEntity<Category> saveCategory(HttpServletRequest request, HttpServletRequest response, @RequestBody Category category) throws  Exception {
         User loggedInUser = userService.getLoggedInUser();
         if (!userService.userHasWritePermission(loggedInUser))
             return new ResponseEntity("User doesn't has write permission", HttpStatus.FORBIDDEN);
-        if (productService.categoryExists(category.getCategory()))
+        if (categoryService.categoryExists(category.getCategory()))
             return new ResponseEntity("Category already exist", HttpStatus.BAD_REQUEST);
         categoryDao.save(category);
         return new ResponseEntity(category, HttpStatus.ACCEPTED);
@@ -47,11 +49,22 @@ public class CategoryController {
         if(categoryIds!=null){
             if(!StringUtils.convertCommaSepratedIntoList(categoryIds).isPresent())
                 return new ResponseEntity("Category ids are not valid",HttpStatus.BAD_REQUEST);
-            categoryList = (List<Category>) categoryDao.findAllById(StringUtils.convertCommaSepratedIntoList(categoryIds).get());
+            categoryList = (List<Category>) categoryService.findByIds(StringUtils.convertCommaSepratedIntoList(categoryIds).get()).get();
         }
         else
-            categoryList = (List<Category>) categoryDao.findAll();
+            categoryList = (List<Category>) categoryService.findAll().get();
         return new ResponseEntity(categoryList,HttpStatus.ACCEPTED);
+    }
+
+    @DeleteMapping(value="/", consumes = "application/json")
+    public ResponseEntity<Category> deleteCategory(@RequestBody Category category){
+        User loggedInUser = userService.getLoggedInUser();
+        if(!userService.userHasWritePermission(loggedInUser))
+            return new ResponseEntity("User doesn't has write permission",HttpStatus.FORBIDDEN);
+        if(!categoryDao.existsById(category.getId()))
+            return new ResponseEntity("Category id are not valid",HttpStatus.BAD_REQUEST);
+        categoryService.unAvailableCategory(category);
+        return new ResponseEntity(category,HttpStatus.ACCEPTED);
     }
 
 }

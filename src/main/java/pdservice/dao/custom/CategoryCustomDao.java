@@ -4,6 +4,7 @@ import org.hibernate.Session;
 import org.jboss.logging.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
+import pdservice.entity.Brand;
 import pdservice.entity.Category;
 
 import javax.persistence.EntityManager;
@@ -27,18 +28,34 @@ public class CategoryCustomDao {
         return Optional.ofNullable(getSession().find(Category.class,id));
     }
 
-    public Optional<List<Category>> findAll() {
-        Category category = null;
-        Query query = entityManager.createNativeQuery("select * from category", Category.class);
-        List<Category> categories = query.getResultList();
-        return Optional.ofNullable(categories);
-    }
-
     public Optional<Category> findByName(String name) {
         List<Category> categoryList = null;
         Query query = entityManager.createNativeQuery("select * from category where category= ?", Category.class);
         query.setParameter(1,name);
         categoryList =  query.getResultList();
         return (categoryList!=null && !categoryList.isEmpty()) ? Optional.ofNullable(categoryList.get(0)) : Optional.ofNullable(null)   ;
+    }
+
+    public Optional<Category> unAvailableCategory(Category category){
+        List<Category> categoryList = null;
+        Query query = entityManager.createNativeQuery("update category set available=0 where id = ?",Category.class);
+        query.setParameter(1,category.getId());
+        categoryList = query.getResultList();
+        return categoryList!=null && !categoryList.isEmpty()? Optional.ofNullable(categoryList.get(0)) : Optional.ofNullable(null);
+    }
+
+    public Optional<List<Category>> findAll(){
+        List<Category> categoryList = null;
+        Query query = entityManager.createNativeQuery("select * from category where attribute =1 ",Category.class);
+        categoryList = query.getResultList();
+        return categoryList!=null && !categoryList.isEmpty() ? Optional.ofNullable(categoryList) : Optional.ofNullable(null);
+    }
+
+    public Optional<List<Category>> findByIds(List<Integer> ids){
+        List<Category> categoryList = null;
+        Query query = entityManager.createNativeQuery("select * from category where attribute =1 AND id IN (?)",Category.class);
+        query.setParameter(1,ids);
+        categoryList = query.getResultList();
+        return categoryList!=null && !categoryList.isEmpty() ? Optional.ofNullable(categoryList) : Optional.ofNullable(null);
     }
 }
