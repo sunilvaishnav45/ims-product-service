@@ -27,7 +27,7 @@ public class CategoryController {
     @Autowired
     private ProductService productService;
 
-    @PostMapping(value = {"","/"}, consumes = "application/json")
+    @PostMapping(value = {"/"}, consumes = "application/json")
     public ResponseEntity<Category> saveCategory(HttpServletRequest request, HttpServletRequest response, @RequestBody Category category) throws  Exception {
         User loggedInUser = userService.getLoggedInUser();
         if (!userService.userHasWritePermission(loggedInUser))
@@ -38,7 +38,7 @@ public class CategoryController {
         return new ResponseEntity(category, HttpStatus.ACCEPTED);
     }
 
-    @GetMapping(value = {"","/"})
+    @GetMapping(value = {"/"})
     public ResponseEntity<List<Category>> getCategory(HttpServletRequest request, HttpServletRequest response, @RequestParam(required = false) String categoryIds){
         User loggedInUser = userService.getLoggedInUser();
         List<Category> categoryList = null;

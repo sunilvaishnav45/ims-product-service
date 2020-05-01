@@ -34,7 +34,7 @@ public class AttributeController {
     @Autowired
     private ProductService productService;
 
-    @PostMapping(value = {"","/"}, consumes = "application/json")
+    @PostMapping(value = {"/"}, consumes = "application/json")
     public ResponseEntity<Attributes> saveAttribute(@RequestBody Attributes attributes){
         User loggedInUser = userService.getLoggedInUser();
         if(!userService.userHasWritePermission(loggedInUser))
@@ -45,7 +45,7 @@ public class AttributeController {
         return new ResponseEntity(attributes,HttpStatus.ACCEPTED);
     }
 
-    @GetMapping(value = {"","/"})
+    @GetMapping(value = {"/"})
     public ResponseEntity<List<Category>> getAttribute(HttpServletRequest request, HttpServletRequest response, @RequestParam(required = false) String attributeIds){
         User loggedInUser = userService.getLoggedInUser();
         List<Attributes> attributesList = null;

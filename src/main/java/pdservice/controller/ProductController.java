@@ -30,7 +30,7 @@ public class ProductController {
 
     private static final Logger LOGGER = Logger.getLogger(ProductController.class);
 
-    @PostMapping(value = {"","/"}, consumes = "application/json")
+    @PostMapping(value = {"/"}, consumes = "application/json")
     public ResponseEntity<Product> saveProduct(HttpServletRequest request, HttpServletRequest response, @RequestBody Product product) throws  Exception{
         User loggedInUser = userService.getLoggedInUser();
         if(!userService.userHasWritePermission(loggedInUser))
@@ -47,7 +47,7 @@ public class ProductController {
         }
     }
 
-    @GetMapping(value = {"","/"})
+    @GetMapping(value = {"/"})
     public ResponseEntity<List<Product>> getProduct(HttpServletRequest request, HttpServletRequest response, @RequestParam(required = false) String productIds){
         User loggedInUser = userService.getLoggedInUser();
         List<Product> productList = null;

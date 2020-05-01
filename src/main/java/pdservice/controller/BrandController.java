@@ -27,7 +27,7 @@ public class BrandController {
     @Autowired
     private ProductService productService;
 
-    @PostMapping(value = {"","/"}, consumes = "application/json")
+    @PostMapping(value = {"/"}, consumes = "application/json")
     public ResponseEntity<Brand> saveBrand(HttpServletRequest request, HttpServletRequest response, @RequestBody Brand brand){
         User loggedInUser = userService.getLoggedInUser();
         if(!userService.userHasWritePermission(loggedInUser))
@@ -38,7 +38,7 @@ public class BrandController {
         return new ResponseEntity(brand, HttpStatus.ACCEPTED);
     }
 
-    @GetMapping(value = {"","/"})
+    @GetMapping(value = {"/"})
     public ResponseEntity<List<Brand>> getBrand(HttpServletRequest request, HttpServletRequest response, @RequestParam(required = false) String brandIds){
         User loggedInUser = userService.getLoggedInUser();
         List<Brand> brandList = null;
