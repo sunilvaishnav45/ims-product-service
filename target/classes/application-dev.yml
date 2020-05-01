@@ -1,12 +1,28 @@
 spring:
   application:
-    name: db-service
+    name: product-service
+
+#eureka:
+#  client:
+#    registerWithEureka: true
+#    fetchRegistry: true
+#    serviceUrl:
+#      defaultZone: http://localhost:8301/eureka/
+#  instance:
+#    hostname: localhost
+#
+#spring:
+#  application:
+#    name: product-service
 
 eureka:
   client:
     registerWithEureka: true
     fetchRegistry: true
     serviceUrl:
-      defaultZone: http://localhost:8301/eureka/
+      defaultZone: https://ims-discovery-server.herokuapp.com/eureka/
   instance:
-    hostname: localhost
+    hostname: ims-discovery-server.herokuapp.com
+    homePageUrl: https://ims-product-service.herokuapp.com/
+    statusPageUrl: https://ims-product-service.herokuapp.com/actuator/info
+    healthCheckUrl: https://ims-product-service.herokuapp.com/actuator/health
