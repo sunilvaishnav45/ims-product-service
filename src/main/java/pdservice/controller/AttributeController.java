@@ -65,7 +65,7 @@ public class AttributeController {
     }
 
     @PostMapping(value = "/values/", consumes = "application/json")
-    public ResponseEntity<AttributeValuesResponse> saveAttribute(@RequestBody List<AttributeValues> attributeValuesList){
+    public ResponseEntity<AttributeValuesResponse> saveAttributeValues(@RequestBody List<AttributeValues> attributeValuesList){
         User loggedInUser = userService.getLoggedInUser();
         if(!userService.userHasWritePermission(loggedInUser))
             return new ResponseEntity("User doesn't have write permission",HttpStatus.FORBIDDEN);
@@ -90,8 +90,38 @@ public class AttributeController {
         if(!userService.userHasWritePermission(loggedInUser))
             return new ResponseEntity("User doesn't has write permission",HttpStatus.FORBIDDEN);
         if(!attributeValuesDao.existsById(attributeValues.getId()))
-            return new ResponseEntity("Attribute Values id are not valid",HttpStatus.BAD_REQUEST);
+            return new ResponseEntity("Attribute Values id is not valid",HttpStatus.BAD_REQUEST);
         attributeService.unAvailableAttributeValue(attributeValues);
         return new ResponseEntity(attributeValues,HttpStatus.ACCEPTED);
+    }
+
+    @PutMapping(value = {"/"}, consumes = "application/json")
+    public ResponseEntity<Attributes> updateAttribute(@RequestBody Attributes attributes){
+        User loggedInUser = userService.getLoggedInUser();
+        if(!userService.userHasWritePermission(loggedInUser))
+            return new ResponseEntity("User doesn't have write permission", HttpStatus.FORBIDDEN);
+        if(!attributeDao.existsById(attributes.getId()))
+            return new ResponseEntity("Attribute doesn't exists",HttpStatus.BAD_REQUEST);
+        if(attributeService.attributeExists(attributes.getAttribute()))
+            return new ResponseEntity("Attribute already exists",HttpStatus.BAD_REQUEST);
+        Optional<Attributes> updateAttribute = attributeService.updateAttribute(attributes);
+        if(updateAttribute.isPresent())
+            return new ResponseEntity(updateAttribute.get(),HttpStatus.ACCEPTED);
+        return new ResponseEntity("Attribute updating failed",HttpStatus.BAD_REQUEST);
+    }
+
+    @PutMapping(value = "/values/", consumes = "application/json")
+    public ResponseEntity<AttributeValues> updateAttributeValues(@RequestBody AttributeValues attributeValues){
+        User loggedInUser = userService.getLoggedInUser();
+        if(!userService.userHasWritePermission(loggedInUser))
+            return new ResponseEntity("User doesn't have write permission",HttpStatus.FORBIDDEN);
+        if(!attributeValuesDao.existsById(attributeValues.getId()))
+            return new ResponseEntity("Attribute Values id is not valid",HttpStatus.BAD_REQUEST);
+        if(attributeService.attributeValuesExists(attributeValues))
+            return new ResponseEntity("Attribute Values already exists",HttpStatus.BAD_REQUEST);
+        Optional<AttributeValues> updateAttributeValues = attributeService.updateAttributeValues(attributeValues);
+        if(updateAttributeValues.isPresent())
+            return new ResponseEntity(updateAttributeValues.get(),HttpStatus.ACCEPTED);
+        return new ResponseEntity("Attribute Values updating failed",HttpStatus.BAD_REQUEST);
     }
 }

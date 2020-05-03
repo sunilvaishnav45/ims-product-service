@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import pdservice.entity.AttributeValues;
 import pdservice.entity.Attributes;
+import pdservice.utils.StringUtils;
 
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
@@ -48,9 +49,20 @@ public class AttributeValuesCustomDao {
     public Optional<List<AttributeValues>> findByIds(List<Integer> ids){
         List<AttributeValues> attributesValuesList = null;
         Query query = entityManager.createNativeQuery("select * from attribute_values where available =1 AND id IN (?)",AttributeValues.class);
-        query.setParameter(1,ids);
+        query.setParameter(1,String.join(",", StringUtils.convertListInto(ids, s -> String.valueOf(s))));
         attributesValuesList = query.getResultList();
         return attributesValuesList!=null && !attributesValuesList.isEmpty() ? Optional.ofNullable(attributesValuesList) : Optional.ofNullable(null);
+    }
+
+    public Optional<AttributeValues> updateAttributeValues(AttributeValues attributeValues){
+        Query query = entityManager.createNativeQuery("update attribute_values set attribute_value=?, available=?, attributes=? where id =?", AttributeValues.class);
+        query.setParameter(1,attributeValues.getAttributeValue());
+        query.setParameter(2,attributeValues.isAvailable());
+        query.setParameter(3,attributeValues.getAttributes().getId());
+        query.setParameter(4,attributeValues.getId());
+        int rowCount = query.executeUpdate();
+        return rowCount>0 ? Optional.ofNullable(attributeValues) : Optional.ofNullable(null);
+
     }
 
 }

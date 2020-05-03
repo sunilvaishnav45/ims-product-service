@@ -58,12 +58,12 @@ public class AttributeServiceImpl implements AttributeService {
 
     @Override
     public Optional<Attributes> updateAttribute(Attributes attributes) {
-        return Optional.empty();
+        return attributeCustomDao.updateAttribute(attributes);
     }
 
     @Override
     public Optional<AttributeValues> updateAttributeValues(AttributeValues attributeValues) {
-        return Optional.empty();
+        return attributeValuesCustomDao.updateAttributeValues(attributeValues);
     }
 
     @Override

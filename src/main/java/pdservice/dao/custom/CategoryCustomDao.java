@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import pdservice.entity.Brand;
 import pdservice.entity.Category;
+import pdservice.utils.StringUtils;
 
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
@@ -53,7 +54,7 @@ public class CategoryCustomDao {
     public Optional<List<Category>> findByIds(List<Integer> ids){
         List<Category> categoryList = null;
         Query query = entityManager.createNativeQuery("select * from category where available =1 AND id IN (?)",Category.class);
-        query.setParameter(1,ids);
+        query.setParameter(1,String.join(",", StringUtils.convertListInto(ids, s -> String.valueOf(s))));
         categoryList = query.getResultList();
         return categoryList!=null && !categoryList.isEmpty() ? Optional.ofNullable(categoryList) : Optional.ofNullable(null);
     }
