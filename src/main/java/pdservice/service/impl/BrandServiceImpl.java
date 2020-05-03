@@ -3,6 +3,7 @@ package pdservice.service.impl;
 import org.jboss.logging.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import pdservice.dao.BrandDao;
 import pdservice.dao.custom.*;
 import pdservice.entity.Brand;
@@ -45,5 +46,10 @@ public class BrandServiceImpl implements BrandService {
     @Override
     public Optional<List<Brand>> findAll() {
         return brandCustomDao.findAll();
+    }
+
+    @Override
+    public Optional<Brand> updateBrand(Brand brand) {
+        return brandCustomDao.updateBrand(brand);
     }
 }

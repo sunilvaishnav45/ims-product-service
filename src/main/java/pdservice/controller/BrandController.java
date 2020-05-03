@@ -68,8 +68,23 @@ public class BrandController {
         if(!userService.userHasWritePermission(loggedInUser))
             return new ResponseEntity("User doesn't has write permission",HttpStatus.FORBIDDEN);
         if(!brandDao.existsById(brand.getId()))
-            return new ResponseEntity("Brand id are not valid",HttpStatus.BAD_REQUEST);
+            return new ResponseEntity("Brand id is not valid",HttpStatus.BAD_REQUEST);
         brandService.unAvailableBrand(brand);
         return new ResponseEntity(brand,HttpStatus.ACCEPTED);
+    }
+
+    @PutMapping(value = "/", consumes = "application/json")
+    public ResponseEntity<Brand> updateBrand(@RequestBody Brand brand){
+        User loggedInUser = userService.getLoggedInUser();
+        if(!userService.userHasWritePermission(loggedInUser))
+            return new ResponseEntity("User doesn't has write permission",HttpStatus.FORBIDDEN);
+        if (brandService.brandExists(brand.getBrand()))
+            return new ResponseEntity("Brand already exist", HttpStatus.BAD_REQUEST);
+        if(!brandDao.existsById(brand.getId()))
+            return new ResponseEntity("Brand id is not valid",HttpStatus.BAD_REQUEST);
+        Optional<Brand> updateBrand = brandService.updateBrand(brand);
+        if(!updateBrand.isPresent())
+            return new ResponseEntity("Brand updating failed.",HttpStatus.BAD_REQUEST);
+        return new ResponseEntity(updateBrand.get(),HttpStatus.ACCEPTED);
     }
 }

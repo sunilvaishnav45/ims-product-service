@@ -31,11 +31,11 @@ public class AttributeValuesCustomDao {
     }
 
     public Optional<AttributeValues> unAvailableAttributeValue(AttributeValues attributeValues){
-        List<AttributeValues> attributesValuesList = null;
         Query query = entityManager.createNativeQuery("update attribute_values set available=0 where id =?", AttributeValues.class);
-        query.setParameter(2,attributeValues.getId());
-        attributesValuesList = query.getResultList();
-        return attributesValuesList!=null && !attributesValuesList.isEmpty() ? Optional.ofNullable(attributesValuesList.get(0)) : Optional.ofNullable(null);
+        query.setParameter(1,attributeValues.getId());
+        int rowCount = query.executeUpdate();
+        return rowCount>0 ? Optional.ofNullable(attributeValues) : Optional.ofNullable(null);
+
     }
 
     public Optional<List<AttributeValues>> findAll(){

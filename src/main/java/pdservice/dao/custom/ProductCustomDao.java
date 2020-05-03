@@ -32,11 +32,10 @@ public class ProductCustomDao {
     }
 
     public Optional<Product> unAvailableProduct(Product product){
-        List<Product> productList = null;
         Query query = entityManager.createNativeQuery("update product set available=0 where = ?", Product.class);
         query.setParameter(1,product.getId());
-        productList = query.getResultList();
-        return productList!=null && !productList.isEmpty() ? Optional.ofNullable(productList.get(0)) : Optional.ofNullable(null);
+        int rowCount = query.executeUpdate();
+        return rowCount>0 ? Optional.ofNullable(product) : Optional.ofNullable(null);
     }
 
 

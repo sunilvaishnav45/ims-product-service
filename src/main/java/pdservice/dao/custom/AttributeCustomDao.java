@@ -38,11 +38,10 @@ public class AttributeCustomDao {
     }
 
     public Optional<Attributes> unAvailableAttributes(Attributes attributes){
-        List<Attributes> attributesList = null;
         Query query = entityManager.createNativeQuery("update attributes set available=0 where id =? ",Attributes.class);
         query.setParameter(1,attributes.getId());
-        attributesList = query.getResultList();
-        return attributesList!=null && !attributesList.isEmpty() ? Optional.ofNullable(attributesList.get(0)) : Optional.ofNullable(null);
+        int rowCount = query.executeUpdate();
+        return rowCount>0 ? Optional.ofNullable(attributes) : Optional.ofNullable(null);
     }
 
     public Optional<List<Attributes>> findAll(){

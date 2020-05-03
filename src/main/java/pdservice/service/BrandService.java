@@ -17,4 +17,6 @@ public interface BrandService {
 
     public Optional<List<Brand>> findAll();
 
+    public Optional<Brand> updateBrand(Brand brand);
+
 }

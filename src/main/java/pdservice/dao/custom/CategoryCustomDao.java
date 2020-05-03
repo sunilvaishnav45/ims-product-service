@@ -37,11 +37,10 @@ public class CategoryCustomDao {
     }
 
     public Optional<Category> unAvailableCategory(Category category){
-        List<Category> categoryList = null;
         Query query = entityManager.createNativeQuery("update category set available=0 where id = ?",Category.class);
         query.setParameter(1,category.getId());
-        categoryList = query.getResultList();
-        return categoryList!=null && !categoryList.isEmpty()? Optional.ofNullable(categoryList.get(0)) : Optional.ofNullable(null);
+        int rowCount = query.executeUpdate();
+        return rowCount>0 ? Optional.ofNullable(category) : Optional.ofNullable(null);
     }
 
     public Optional<List<Category>> findAll(){
@@ -57,5 +56,16 @@ public class CategoryCustomDao {
         query.setParameter(1,ids);
         categoryList = query.getResultList();
         return categoryList!=null && !categoryList.isEmpty() ? Optional.ofNullable(categoryList) : Optional.ofNullable(null);
+    }
+
+    public Optional<Category> updateCategory(Category category){
+        List<Category> categoryList = null;
+        Query query = entityManager.createNativeQuery(
+                "update category set category=?,available=? where id=?",Category.class);
+        query.setParameter(1,category.getCategory());
+        query.setParameter(2,category.isAvailable());
+        query.setParameter(3,category.getId());
+        categoryList = query.getResultList();
+        return categoryList!=null && !categoryList.isEmpty() ? Optional.ofNullable(categoryList.get(0)) : Optional.ofNullable(null);
     }
 }

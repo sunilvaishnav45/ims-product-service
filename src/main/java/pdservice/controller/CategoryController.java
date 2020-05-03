@@ -70,9 +70,24 @@ public class CategoryController {
         if(!userService.userHasWritePermission(loggedInUser))
             return new ResponseEntity("User doesn't has write permission",HttpStatus.FORBIDDEN);
         if(!categoryDao.existsById(category.getId()))
-            return new ResponseEntity("Category id are not valid",HttpStatus.BAD_REQUEST);
+            return new ResponseEntity("Category id is not valid",HttpStatus.BAD_REQUEST);
         categoryService.unAvailableCategory(category);
         return new ResponseEntity(category,HttpStatus.ACCEPTED);
+    }
+
+    @PutMapping(value="/", consumes = "application/json")
+    public ResponseEntity<Category> updateCategory(@RequestBody Category category){
+        User loggedInUser = userService.getLoggedInUser();
+        if(!userService.userHasWritePermission(loggedInUser))
+            return new ResponseEntity("User doesn't has write permission",HttpStatus.FORBIDDEN);
+        if (categoryService.categoryExists(category.getCategory()))
+            return new ResponseEntity("Category already exist", HttpStatus.BAD_REQUEST);
+        if(!categoryDao.existsById(category.getId()))
+            return new ResponseEntity("Category id is not valid",HttpStatus.BAD_REQUEST);
+        Optional<Category> updateCategory = categoryService.updateCategory(category);
+        if(!updateCategory.isPresent())
+            return new ResponseEntity("Category updating failed",HttpStatus.BAD_REQUEST);
+        return new ResponseEntity(updateCategory.get(),HttpStatus.ACCEPTED);
     }
 
 }

@@ -16,4 +16,6 @@ public interface CategoryService {
     public Optional<List<Category>> findByIds(List<Integer> ids);
 
     public Optional<List<Category>> findAll();
+
+    public Optional<Category> updateCategory(Category category);
 }

@@ -49,5 +49,10 @@ public class CategoryServiceImpl implements CategoryService {
         return categoryCustomDao.findAll();
     }
 
+    @Override
+    public Optional<Category> updateCategory(Category category) {
+        return categoryCustomDao.updateCategory(category);
+    }
+
 
 }
