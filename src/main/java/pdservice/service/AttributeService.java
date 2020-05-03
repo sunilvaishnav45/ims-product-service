@@ -28,4 +28,8 @@ public interface AttributeService {
     public Optional<List<Attributes>> findAllAttributes();
 
     public Optional<List<AttributeValues>> findAllAttributeValues();
+
+    public Optional<Attributes> updateAttribute(Attributes attributes);
+
+    public Optional<AttributeValues> updateAttributeValues(AttributeValues attributeValues);
 }

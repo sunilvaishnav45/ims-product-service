@@ -57,6 +57,16 @@ public class AttributeServiceImpl implements AttributeService {
     }
 
     @Override
+    public Optional<Attributes> updateAttribute(Attributes attributes) {
+        return Optional.empty();
+    }
+
+    @Override
+    public Optional<AttributeValues> updateAttributeValues(AttributeValues attributeValues) {
+        return Optional.empty();
+    }
+
+    @Override
     public AttributeValuesResponse saveAttributeValue(List<AttributeValues> attributeValuesList) {
         AttributeValuesResponse attributeValuesResponse = new AttributeValuesResponse();
         List<AttributeValues> savedAttributeValues = new ArrayList<AttributeValues>();

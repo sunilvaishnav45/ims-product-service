@@ -90,4 +90,23 @@ public class ProductController {
         return new ResponseEntity(product,HttpStatus.ACCEPTED);
     }
 
+    @PutMapping(value = {"/"}, consumes = "application/json")
+    public ResponseEntity<Product> updateProduct(HttpServletRequest request, HttpServletRequest response, @RequestBody Product product) throws  Exception{
+        User loggedInUser = userService.getLoggedInUser();
+        if(!userService.userHasWritePermission(loggedInUser))
+            return new ResponseEntity("User doesn't has write permission",HttpStatus.FORBIDDEN);
+        if(!productService.productExists(product)){
+            if(!categoryService.categoryExists(product.getCategory()))
+                return new ResponseEntity("Category doesn't exist",HttpStatus.BAD_REQUEST);
+            if(!brandService.brandExists(product.getBrand()))
+                return new ResponseEntity("Brand doesn't exist",HttpStatus.BAD_REQUEST);
+            Optional<Product> updatedProduct = productService.updateProduct(product);
+            if(!updatedProduct.isPresent())
+                return new ResponseEntity("Product updating failed.",HttpStatus.BAD_REQUEST);
+            return new ResponseEntity(updatedProduct.get(),HttpStatus.ACCEPTED);
+        }else{
+            return new ResponseEntity("Product already exist",HttpStatus.BAD_REQUEST);
+        }
+    }
+
 }

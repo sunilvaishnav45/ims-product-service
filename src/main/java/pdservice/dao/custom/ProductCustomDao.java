@@ -32,7 +32,7 @@ public class ProductCustomDao {
     }
 
     public Optional<Product> unAvailableProduct(Product product){
-        Query query = entityManager.createNativeQuery("update product set available=0 where = ?", Product.class);
+        Query query = entityManager.createNativeQuery("update product set available=0 where id = ?", Product.class);
         query.setParameter(1,product.getId());
         int rowCount = query.executeUpdate();
         return rowCount>0 ? Optional.ofNullable(product) : Optional.ofNullable(null);
@@ -52,5 +52,20 @@ public class ProductCustomDao {
         query.setParameter(1,ids);
         productList = query.getResultList();
         return productList!=null && !productList.isEmpty() ? Optional.ofNullable(productList) : Optional.ofNullable(null);
+    }
+
+    public Optional<Product> updateProduct(Product product){
+        Query query = entityManager.createNativeQuery(
+                "update product set name=?, img_url=?, brand=?, category=?, description=?, price=?, rating=?  where id = ?", Product.class);
+        query.setParameter(1,product.getName());
+        query.setParameter(2,product.getImgURL());
+        query.setParameter(3,product.getBrand().getId());
+        query.setParameter(4,product.getCategory().getId());
+        query.setParameter(5,product.getDescription());
+        query.setParameter(6,product.getPrice());
+        query.setParameter(7,product.getRating());
+        query.setParameter(8,product.getId());
+        int rowCount = query.executeUpdate();
+        return rowCount>0 ? Optional.ofNullable(product) : Optional.ofNullable(null);
     }
 }

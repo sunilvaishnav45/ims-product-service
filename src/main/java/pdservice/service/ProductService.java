@@ -15,4 +15,6 @@ public interface ProductService {
     public Optional<List<Product>> findByIds(List<Integer> ids);
 
     public Optional<List<Product>> findAll();
+
+    public Optional<Product> updateProduct(Product product);
 }

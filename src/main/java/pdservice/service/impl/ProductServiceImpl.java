@@ -41,4 +41,9 @@ public class ProductServiceImpl implements ProductService {
     public Optional<List<Product>> findAll() {
         return productCustomDao.findAll();
     }
+
+    @Override
+    public Optional<Product> updateProduct(Product product) {
+        return productCustomDao.updateProduct(product);
+    }
 }
