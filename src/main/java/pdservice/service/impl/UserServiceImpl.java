@@ -1,10 +1,12 @@
 package pdservice.service.impl;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import pdservice.entity.User;
 import pdservice.service.UserService;
 
 @Service
+@Transactional
 public class UserServiceImpl implements UserService {
 
 

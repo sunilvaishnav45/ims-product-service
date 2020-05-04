@@ -33,7 +33,6 @@ public class BrandCustomDao {
         return brands!=null && !brands.isEmpty()? Optional.ofNullable(brands.get(0)) : Optional.ofNullable(null);
     }
 
-    @Modifying
     public Optional<Brand> unAvailableBrand(Brand brand){
         Query query = entityManager.createNativeQuery("update brand set available=0 where id = ?",Brand.class);
         query.setParameter(1,brand.getId());

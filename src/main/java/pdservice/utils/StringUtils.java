@@ -15,7 +15,7 @@ public class StringUtils {
     public static Optional<List<Integer>> convertCommaSepratedIntoList(String s){
         if(s==null || s.isEmpty())
           return Optional.ofNullable(null);
-        List<Integer> integerList = new ArrayList<Integer>();
+        List<Integer> integerList = new ArrayList<>();
         String[] stringList = s.split(",");
         for (String str : stringList){
             try {
