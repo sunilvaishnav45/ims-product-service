@@ -5,7 +5,7 @@ import org.jboss.logging.Logger;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.function.*;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 public class StringUtils {
@@ -15,7 +15,7 @@ public class StringUtils {
     public static Optional<List<Integer>> convertCommaSepratedIntoList(String s){
         if(s==null || s.isEmpty())
           return Optional.ofNullable(null);
-        List<Integer> integerList = new ArrayList<>();
+        List<Integer> integerList = new ArrayList<Integer>();
         String[] stringList = s.split(",");
         for (String str : stringList){
             try {
@@ -27,7 +27,6 @@ public class StringUtils {
         }
         return integerList!=null && !integerList.isEmpty() ? Optional.ofNullable(integerList) : Optional.ofNullable(null);
     }
-
 
     public static <T, U> List<U>  convertListInto(List<T> integerList, Function<T, U> function){
         return integerList.stream().map(function).collect(Collectors.toList());
