@@ -23,6 +23,7 @@ public class ServiceInterceptor implements HandlerInterceptor {
             throws Exception {
         String getURL = request.getRequestURI();
         String authToken = request.getHeader("token");
+        LOGGER.info("getURL "+getURL+" authToken "+authToken +" method "+request.getMethod());
         if(authToken!=null && !authToken.isEmpty() && !jwtTokenUtil.isTokenExpired(authToken)){//Private Urls
             return true;
         }
